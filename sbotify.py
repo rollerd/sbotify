@@ -16,24 +16,39 @@ password_hash = pylast.md5(" ")
 
 
 def connect_lastfm():
+    '''
+    Returns a last.fm network object using pylast and the users API credentials
+    '''
     network = pylast.LastFMNetwork(api_key = API_KEY, api_secret = API_SECRET, username = username, password_hash = password_hash)
     logging.info('Created network object')
     return network
 
 
 def get_user(network):
+    '''
+    Returns a last.fm user object
+    '''
     myuser = network.get_user(username)
 
     return myuser
 
 
 def get_currently_playing(user):
+    '''
+    Returns the currently playing song object from last.fm for the specified user
+    '''
     now_playing = user.get_now_playing()
 
     return now_playing
 
 
 def send_to_slack(now_playing):
+    '''
+    Creates a json data object containing a Spotify link to the currently playing track along with a small message and POSTs to the 
+    configured Slack Incoming Webhook Integration. Slack will show the Spotify track player inline for other Slack users to see/use.
+    We don't currently use the cover_img link, but we could easily use it in place of the Spotify track link if we didn't want the 
+    Spotify player shown in Slack.
+    '''
     link, cover_url,track = get_spotify_info(now_playing)
 
     if not link:
@@ -47,6 +62,10 @@ def send_to_slack(now_playing):
 
 
 def get_spotify_info(now_playing):
+    '''
+    Attempt to lookup the currently playing track by using Spotify unauthenticated API and searching on artist, album, track
+    Returns track link from returned Spotify response, album art link, and track name
+    '''
     try:
         artist = now_playing.get_artist().name
         track = now_playing.get_title()
@@ -73,6 +92,12 @@ def get_spotify_info(now_playing):
 
 
 def main_loop(network):
+    '''
+    Loop that keeps checking for usernames that are added to the users.txt file.
+    Sets a current track and update_time on each user. If 40 seconds has passed since a users last update,
+    the script will make an API call to determine if the current song has changed for that user.
+    If there is a song change, the send_to_slack function is called
+    '''
     user_status = {} # {username : [song, last_update], ...}
 
     while 1:
