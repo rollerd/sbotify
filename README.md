@@ -6,6 +6,8 @@ creates a JSON payload for output to Slack webhook integration. Works for multip
 # Sbotify Update
 
 This was just a small test for fun to see how Slack integrations work (we had a #music channel, so why not?).
+This whole thing would be a lot better if Spotify would provide a web API endpoint for grabbing the current track :(
+
 I don't plan on doing any more work with it.
 
 
@@ -13,7 +15,8 @@ I don't plan on doing any more work with it.
 
 The script user must have a last.fm API account.
 
-Each user that wishes to display their currently playing track must have a last.fm account and enable scrobbling from Spotify (or other service) to last.fm
+Each user that wishes to display their currently playing track must have a last.fm account and enable scrobbling from Spotify (or other service) to last.fm 
+as well as having the last.fm desktop scobbling app open (last.fm web player seems to be broken and the current track isn't picked up unless the app is used)
 
 **pylast** - For connecting to last.fm API
 
